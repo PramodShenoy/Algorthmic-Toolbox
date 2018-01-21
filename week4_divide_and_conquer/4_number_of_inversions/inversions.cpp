@@ -1,25 +1,75 @@
-#include <iostream>
-#include <vector>
-
-using std::vector;
-
-long long get_number_of_inversions(vector<int> &a, vector<int> &b, size_t left, size_t right) {
-  long long number_of_inversions = 0;
-  if (right <= left + 1) return number_of_inversions;
-  size_t ave = left + (right - left) / 2;
-  number_of_inversions += get_number_of_inversions(a, b, left, ave);
-  number_of_inversions += get_number_of_inversions(a, b, ave, right);
-  //write your code here
-  return number_of_inversions;
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long 
+ll merge(ll arr[], ll l, ll m, ll r)
+{
+    ll i, j, k;
+    ll pairs =0;
+    ll n1 = m - l + 1;
+    ll n2 =  r - m;
+    ll left[n1], right[n2];
+    for (i = 0; i < n1; i++)
+        left[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        right[j] = arr[m + 1+ j];
+ 
+    i = 0; 
+    j = 0; 
+    k = l; 
+    while (i < n1 && j < n2)
+    {
+        if (left[i] <= right[j])
+        {
+            arr[k] = left[i];
+            i++;
+        }
+        else if(left[i]>right[j])
+        {
+          pairs++;
+          //pairs+=(m-i);
+            arr[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+ 
+    while (i < n1)
+    {
+        arr[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < n2)
+    {
+        arr[k] = right[j];
+        j++;
+        k++;
+    }
+    return pairs;
+}
+ 
+ll mergeSort(ll arr[], ll l, ll r)
+{
+  ll pairs=0;
+    if (l < r)
+    {
+        
+        ll m = l+(r-l)/2;
+        pairs+=mergeSort(arr, l, m);
+        pairs+=mergeSort(arr, m+1, r);
+        pairs+= merge(arr, l, m, r);
+        cout<<pairs<<endl;
+    }
+    return pairs;
 }
 
-int main() {
-  int n;
-  std::cin >> n;
-  vector<int> a(n);
-  for (size_t i = 0; i < a.size(); i++) {
-    std::cin >> a[i];
-  }
-  vector<int> b(a.size());
-  std::cout << get_number_of_inversions(a, b, 0, a.size()) << '\n';
+int main()
+{
+  ll i,j,n;
+  cin>>n;
+  ll arr[n];
+  for(i=0;i<n;i++)
+    cin>>arr[i];
+  mergeSort(arr,0,n-1);
+  return 0;
 }

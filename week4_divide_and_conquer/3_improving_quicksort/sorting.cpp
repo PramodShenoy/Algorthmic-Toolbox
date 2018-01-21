@@ -1,45 +1,99 @@
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-
-using std::vector;
-using std::swap;
-
-int partition2(vector<int> &a, int l, int r) {
-  int x = a[l];
-  int j = l;
-  for (int i = l + 1; i <= r; i++) {
-    if (a[i] <= x) {
-      j++;
-      swap(a[i], a[j]);
+// C++ program for 3-way quick sort
+#include <bits/stdc++.h>
+using namespace std;
+ #define ll long long
+/* This function partitions a[] in three parts
+   a) a[l..i] contains all elements smaller than pivot
+   b) a[i+1..j-1] contains all occurrences of pivot
+   c) a[j..r] contains all elements greater than pivot */
+void partition(ll a[], ll l, ll r, ll &i, ll &j)
+{
+    i = l-1, j = r;
+    ll p = l-1, q = r;
+    ll v = a[r];
+ 
+    while (true)
+    {
+        // From left, find the first element greater than
+        // or equal to v. This loop will definitely terminate
+        // as v is last element
+        while (a[++i] < v);
+ 
+        // From right, find the first element smaller than or
+        // equal to v
+        while (v < a[--j])
+            if (j == l)
+                break;
+ 
+        // If i and j cross, then we are done
+        if (i >= j) break;
+ 
+        // Swap, so that smaller goes on left greater goes on right
+        swap(a[i], a[j]);
+ 
+        // Move all same left occurrence of pivot to beginning of
+        // array and keep count using p
+        if (a[i] == v)
+        {
+            p++;
+            swap(a[p], a[i]);
+        }
+ 
+        // Move all same right occurrence of pivot to end of array
+        // and keep count using q
+        if (a[j] == v)
+        {
+            q--;
+            swap(a[j], a[q]);
+        }
     }
-  }
-  swap(a[l], a[j]);
-  return j;
+ 
+    // Move pivot element to its correct index
+    swap(a[i], a[r]);
+ 
+    // Move all left same occurrences from beginning
+    // to adjacent to arr[i]
+    j = i-1;
+    for (ll k = l; k < p; k++, j--)
+        swap(a[k], a[j]);
+ 
+    // Move all right same occurrences from end
+    // to adjacent to arr[i]
+    i = i+1;
+    for (ll k = r-1; k > q; k--, i++)
+        swap(a[i], a[k]);
 }
-
-void randomized_quick_sort(vector<int> &a, int l, int r) {
-  if (l >= r) {
-    return;
-  }
-
-  int k = l + rand() % (r - l + 1);
-  swap(a[l], a[k]);
-  int m = partition2(a, l, r);
-
-  randomized_quick_sort(a, l, m - 1);
-  randomized_quick_sort(a, m + 1, r);
+ 
+// 3-way partition based quick sort
+void quicksort(ll a[], ll l, ll r)
+{
+    if (r <= l) return;
+ 
+    ll i, j;
+ 
+    // Note that i and j are passed as reference
+    partition(a, l, r, i, j);
+ 
+    // Recur
+    quicksort(a, l, j);
+    quicksort(a, i, r);
 }
-
-int main() {
-  int n;
-  std::cin >> n;
-  vector<int> a(n);
-  for (size_t i = 0; i < a.size(); ++i) {
-    std::cin >> a[i];
-  }
-  randomized_quick_sort(a, 0, a.size() - 1);
-  for (size_t i = 0; i < a.size(); ++i) {
-    std::cout << a[i] << ' ';
-  }
+ 
+void printarr(ll a[], ll n)
+{
+    for (ll i = 0; i < n; ++i)
+        cout<<a[i]<<" ";
+    cout<<endl;
+}
+ 
+int main()
+{
+    ll size,i;
+    cin>>size;
+    ll a[size];
+    for(i=0;i<size;i++)
+    	cin>>a[i];
+    quicksort(a, 0, size - 1);
+    printarr(a, size);
+    return 0;
 }
